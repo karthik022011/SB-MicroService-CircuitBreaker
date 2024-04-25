@@ -6,6 +6,7 @@ import com.kartheek.orderservice.external.client.ProductServiceAPIClient;
 import com.kartheek.orderservice.external.response.ProductDetailsResDTO;
 import com.kartheek.orderservice.model.OrderReqDtO;
 import com.kartheek.orderservice.repository.OrderRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     private ProductServiceAPIClient productServiceAPIClient;
 
+    @CircuitBreaker(name = "ORDER-SERVICE", fallbackMethod = "fallbackMethodName")
     @Override
     public long placeOrder(OrderReqDtO orderReqDtO) {
         //fetch product info
@@ -32,4 +34,5 @@ public class OrderServiceImpl implements OrderService{
         Order savedOrder = orderRepository.save(order);
         return savedOrder.getOrderId();
     }
+
 }
